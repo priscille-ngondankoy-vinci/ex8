@@ -1,8 +1,43 @@
 import 'package:flutter/material.dart';
+import 'package:file_picker/file_picker.dart';
+import 'dart:convert'; // pour utf8.decode
+
 import 'editor_screen.dart';
 
 class HomeScreen extends StatelessWidget {
   const HomeScreen({super.key});
+
+  Future<void> _openFile(BuildContext context) async {
+    final result = await FilePicker.platform.pickFiles(withData: true);
+
+    if (result != null && result.files.isNotEmpty) {
+      final file = result.files.first;
+      final fileName = file.name;
+      final fileContent = utf8.decode(file.bytes!);
+
+      Navigator.push(
+        context,
+        MaterialPageRoute(
+          builder: (context) => EditorScreen(
+            fileName: fileName,
+            content: fileContent,
+          ),
+        ),
+      );
+    }
+  }
+
+  void _createNewFile(BuildContext context) {
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const EditorScreen(
+          fileName: 'fichier.txt',
+          content: '',
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -13,33 +48,11 @@ class HomeScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             ElevatedButton(
-              onPressed: () {
-                // Navigation avec un faux fichier pour l'instant
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EditorScreen(
-                      fileName: 'fichier.txt',
-                      content: '',
-                    ),
-                  ),
-                );
-              },
+              onPressed: () => _openFile(context),
               child: const Text('Ouvrir un fichier existant'),
             ),
             ElevatedButton(
-              onPressed: () {
-                // Nouvelle navigation, aucun fichier fourni
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => const EditorScreen(
-                      fileName: 'fichier.txt',
-                      content: '',
-                    ),
-                  ),
-                );
-              },
+              onPressed: () => _createNewFile(context),
               child: const Text('Créer un nouveau fichier texte'),
             ),
           ],
