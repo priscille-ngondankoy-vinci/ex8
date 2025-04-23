@@ -55,9 +55,11 @@ class HomeScreen extends StatelessWidget {
               onPressed: () => _createNewFile(context),
               child: const Text('Créer un nouveau fichier texte'),
             ),
-          ],
+            ElevatedButton(onPressed: () => const EditorScreen(fileName: 'fichier.txt', content: 'Mon fichier sauvegardé',), child: const Text('mon fichier sauvégardé',
         ),
       ),
-    );
+    ]
+    )
+    ));
   }
 }
