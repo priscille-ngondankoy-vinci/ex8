@@ -1,6 +1,9 @@
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
+import 'package:file_picker/file_picker.dart';
 
+import 'editor_screen.dart';
 class FirstScreen extends StatefulWidget {
   const FirstScreen({super.key});
 
@@ -26,10 +29,10 @@ class _FirstScreenState extends State<FirstScreen> {
 
 
             const SizedBox(height: 16),
-          ElevatedButton(
-            onPressed: () => context.go("/editeur"),
-            child: const Text("Ouvrir un fichier de texte existant"),
-          ),
+            ElevatedButton(
+              onPressed: () => openExistingFile(context),
+              child: Text("Ouvrir un fichier existant"),
+            ),
           ElevatedButton(
           onPressed: () => context.go("/editeur"),
             child: const Text("Créer un nouveau fichier texte"),
@@ -39,4 +42,29 @@ class _FirstScreenState extends State<FirstScreen> {
       ),
     );
   }
+}
+Future<void> openExistingFile(BuildContext context) async {
+  final result = await FilePicker.pickFiles(withData: true);
+
+  if (result != null) {
+    final file = result.files.first;
+
+    if (file.bytes == null) {
+      print("Impossible de lire le contenu du fichier sur Web");
+      return;
+    }
+
+    final content = String.fromCharCodes(file.bytes!);
+    openEditorScreen(context, file);
+  }
+
+}
+
+void openEditorScreen(BuildContext context, PlatformFile file) {
+  Navigator.push(
+    context,
+    MaterialPageRoute(
+      builder: (_) => EditorScreen(file: file),
+    ),
+  );
 }
