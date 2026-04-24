@@ -1,4 +1,6 @@
 
+import 'dart:convert';
+
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:file_picker/file_picker.dart';
@@ -37,6 +39,7 @@ class _FirstScreenState extends State<FirstScreen> {
           onPressed: () => context.go("/editeur"),
             child: const Text("Créer un nouveau fichier texte"),
     ),
+
           ],
         ),
       ),
@@ -59,6 +62,17 @@ Future<void> openExistingFile(BuildContext context) async {
   }
 
 }
+Future<void> saveCurrentFile(String? existingName, String content) async {
+  final fileName = existingName ?? "nouvelle_recette.txt";
+  final bytes = utf8.encode(content);
+
+  await FilePicker.saveFile(
+    fileName: fileName,
+    bytes: bytes,
+  );
+}
+
+
 
 void openEditorScreen(BuildContext context, PlatformFile file) {
   Navigator.push(

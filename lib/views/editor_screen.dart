@@ -1,30 +1,53 @@
 import 'package:flutter/material.dart';
 import 'package:file_picker/file_picker.dart';
 
-class EditorScreen extends StatelessWidget {
-  final PlatformFile file;
+import 'first_screen.dart';
 
-  const EditorScreen({super.key, required this.file});
+class EditorScreen extends StatefulWidget {
+  final PlatformFile? file;
+
+  const EditorScreen({super.key, this.file});
+
+  @override
+  State<EditorScreen> createState() => _EditorScreenState();
+}
+
+class _EditorScreenState extends State<EditorScreen> {
+  late TextEditingController controller;
+
+  @override
+  void initState() {
+    super.initState();
+    controller = TextEditingController(
+      text: widget.file?.bytes != null
+          ? String.fromCharCodes(widget.file!.bytes!)
+          : "",
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
-    final content = String.fromCharCodes(file.bytes!);
-    if (file.bytes != null) {
-      final content = String.fromCharCodes(file.bytes!);
-    }
-
-
     return Scaffold(
-      appBar: AppBar(title: Text(file.name)),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: TextField(
-          controller: TextEditingController(text: content),
-          maxLines: null,
-          expands: true,
-          decoration: const InputDecoration(border: OutlineInputBorder()),
-        ),
+      appBar: AppBar(
+        title: Text(widget.file?.name ?? "nouvelle_recette.txt"),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.save),
+            onPressed: () {
+              saveCurrentFile(
+                widget.file?.name,
+                controller.text,
+              );
+            },
+          ),
+        ],
+      ),
+      body: TextField(
+        controller: controller,
+        maxLines: null,
+        expands: true,
       ),
     );
   }
 }
+
